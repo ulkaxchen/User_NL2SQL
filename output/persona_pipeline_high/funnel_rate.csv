@@ -1,0 +1,7 @@
+﻿step,rate
+step_home,0.4
+step_device_list,0.3
+step_bind,1.0
+step_summon_entry,0.4
+step_select_device,0.4
+step_submit,0.4

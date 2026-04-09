@@ -1,0 +1,75 @@
+{
+  "glossary": [
+    {
+      "term": "客户",
+      "meaning": "当前 users 表里用户和客户问题通常都落在同一张 users 表，可优先用 `用户ID`、`用户昵称`、`联系电话` 做实体定位。",
+      "fields": ["用户ID", "用户昵称", "联系电话"]
+    },
+    {
+      "term": "邮箱",
+      "meaning": "用户邮箱信息存放在 `邮箱` 列，查询时优先按 `用户ID` 或 `用户昵称` 过滤后再读取。",
+      "fields": ["邮箱", "用户ID", "用户昵称"]
+    },
+    {
+      "term": "APP用户",
+      "meaning": "通常指 `所属平台` = 'APP' 的用户。",
+      "fields": ["所属平台"]
+    },
+    {
+      "term": "最近活跃",
+      "meaning": "通常使用 `最近活跃时间` 字段判断活跃时间窗口。",
+      "fields": ["最近活跃时间"]
+    },
+    {
+      "term": "国家或地名",
+      "meaning": "国家/地区名**不要**默认映射到 `所属平台`：`所属平台` 一般指 APP、PC、小程序等**渠道**，不是国家字段。国家词常出现在 `用户昵称`、`目标用户标签` 等文本列。必须先 Inspect_rows 看样本，再用 Search_keyword_across_columns（keyword 用国家词）看命中列，再写 WHERE。",
+      "fields": ["用户昵称", "目标用户标签", "所属平台"]
+    }
+  ],
+  "metrics": [
+    {
+      "name": "用户数量",
+      "definition": "按条件统计 users 表记录数。",
+      "formula": "SELECT COUNT(*) AS count FROM users WHERE ..."
+    },
+    {
+      "name": "最近七天活跃用户数",
+      "definition": "统计 `最近活跃时间` 在最近 7 天内的用户数量。",
+      "formula": "SELECT COUNT(*) AS count FROM users WHERE `最近活跃时间` >= datetime('now', '-7 days')"
+    }
+  ],
+  "rules": [
+    {
+      "name": "明细字段查询规则",
+      "description": "当用户问邮箱、联系电话、角色、身份等明细字段时，应先确定用户实体，再查询目标列，不要直接扫描整表。"
+    },
+    {
+      "name": "时间过滤规则",
+      "description": "当问题出现最近七天、最近30天、本月等时间词时，优先使用 `最近活跃时间` 或 `注册时间` 做过滤，并使用 SQLite 时间函数。"
+    },
+    {
+      "name": "平台过滤规则",
+      "description": "仅当问题明确指**应用渠道**（APP、PC、小程序、跨端、H5 等）时，才用 `所属平台` 过滤。**国家/城市名**（如印度、印尼）不是平台，禁止把国家名写成 `所属平台`='印度'；应先用 Search_keyword_across_columns 定位含该词的列。"
+    },
+    {
+      "name": "跨列关键词定位",
+      "description": "问题含具体词片段（国家名、地名、昵称片段等）时，必须先 Search_keyword_across_columns，按 match_count 选列写 WHERE，避免只猜 `目标用户标签`。可选 Profile_table_columns 了解列值形态。"
+    },
+    {
+      "name": "历史 SQL 示例来源",
+      "description": "知识上下文里的历史问答+SQL 仅来自用户在结果页标记为「有帮助」的记录；系统不会把「仅执行成功」的查询自动当作正确范例。"
+    },
+    {
+      "name": "全量明细与 LIMIT",
+      "description": "用户要「全部/所有/每条/完整数据」时，Finish 中不应在 SQL 末尾加 LIMIT；若模型误加，执行前会按全量意图去掉末尾 LIMIT（用户未要求前 N 条/样例时）。Inspect_rows 仍可用小 limit 探查。"
+    },
+    {
+      "name": "日期与活跃区间",
+      "description": "「某日到某日活跃」「日期范围内用户」应对 `最近活跃时间` 或 `注册时间` 使用 SQL 时间范围条件；禁止使用 Search_keyword_across_columns 处理纯日期或活跃时段。"
+    },
+    {
+      "name": "国家匹配（英文主键 + 中英文列值）",
+      "description": "系统会把问题中的国家解析为规范英文名（Canonical EN），并在 Knowledge 中给出 SQL 模板：对每个文本列同时用 LOWER 后的英文子串与中文 LIKE（含印度/印度尼西亚等消歧）。Agent 应照模板写 WHERE；向用户解释仍用中文国名。"
+    }
+  ]
+}

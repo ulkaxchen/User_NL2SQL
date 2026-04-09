@@ -1,0 +1,3 @@
+﻿blocked_flag,active_days,total_event_cnt,bind_device_cnt,service_entry_click_cnt,summon_submit_cnt,circle_stay,device_detail_stay,api_error_cnt,switch_device_cnt
+0,1.0,20.5,2.0,0.0,0.0,0.0,0.0,0.0,0.0
+1,1.0,109.25,8.75,2.88,4.0,0.41,6.1,7.88,1.12
