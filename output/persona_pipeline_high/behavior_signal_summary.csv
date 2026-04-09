@@ -1,3 +1,0 @@
-﻿behavior_signal_tag,high_active_behavior_hit_cnt_count,high_active_behavior_hit_cnt_mean,low_active_behavior_hit_cnt_count,low_active_behavior_hit_cnt_mean,high_active_behavior_score_count,high_active_behavior_score_mean,low_active_behavior_score_count,low_active_behavior_score_mean,behavior_net_signal_score_count,behavior_net_signal_score_mean
-中性行为,6,0.0,6,0.0,6,0.0,6,0.0,6,0.0
-低活倾向行为,4,6.25,4,9.25,4,22.202,4,81.303,4,-59.1
